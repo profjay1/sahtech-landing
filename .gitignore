@@ -1,0 +1,25 @@
+# IDE
+.idea/
+*.iml
+
+# Operating system
+.DS_Store
+Thumbs.db
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# Node dependencies/build output if tooling is introduced later
+node_modules/
+dist/
+build/
