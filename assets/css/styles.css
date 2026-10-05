@@ -791,12 +791,22 @@ textarea {
   resize:vertical;
 }
 
-fieldset:disabled input,fieldset:disabled select,fieldset:disabled textarea {
-  cursor:not-allowed;
-  -webkit-text-fill-color:#526271;
+/* Not exposed to visitors, keyboard navigation, or assistive technology. */
+.form-honeypot {
+  display:none;
 }
 
-.button:disabled {
+.submission-status:empty {
+  padding:0;
+  margin:0;
+  border:0;
+}
+
+.contact-form .button[type="submit"] {
+  width:100%;
+}
+
+.button:disabled,.button[aria-disabled="true"] {
   cursor:not-allowed;
   background:#e2e9eb;
   color:#526271;
@@ -1058,10 +1068,10 @@ fieldset:disabled input,fieldset:disabled select,fieldset:disabled textarea {
 
 /* Motion is opt-in. Content is visible before enhancement and on failure. */
 @media(prefers-reduced-motion:no-preference) {
-  .button:not(:disabled) {
+  .button:not(:disabled):not([aria-disabled="true"]) {
     transition:background .18s,border-color .18s,transform .18s;
   }
-  .button:not(:disabled):hover,.button:not(:disabled):focus-visible {
+  .button:not(:disabled):not([aria-disabled="true"]):hover,.button:not(:disabled):not([aria-disabled="true"]):focus-visible {
     transform:translateY(-1px);
   }
   .section.is-revealed>.container {

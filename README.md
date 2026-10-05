@@ -48,17 +48,29 @@ You can also open `index.html` directly for a basic visual preview.
 
 ### Files
 
-- `index.html`: landing-page sections, metadata, navigation, and inactive form.
+- `index.html`: landing-page sections, metadata, navigation, and Formspark enquiry form.
 - `assets/css/styles.css`: design tokens, components, and responsive layouts.
-- `assets/js/main.js`: progressive enhancement for mobile navigation.
+- `assets/js/main.js`: navigation, motion, and progressive enquiry submission.
 - `assets/images/favicon.svg`: lightweight provisional brand mark.
 
 ### Contact status
 
-`contact@sahtechlabs.com` is the active email contact option. The online form is
-intentionally disabled and has no submission handler or external connection.
-Do not enable it before approving a submission implementation, privacy content,
-server-side validation, spam protection, and delivery/error behavior.
+Checkpoint 2 enables the enquiry form with a standard HTML POST to
+`https://submit-form.com/1XIG57Vay`. Without JavaScript, Formspark handles the
+submission and feedback page. With JavaScript, the page sends an allowlisted
+JSON payload with `Content-Type` and `Accept` set to `application/json`, prevents
+concurrent submissions, and provides inline success or failure feedback.
+Only an HTTP success response resets the form. Failure preserves entered data.
+
+Submitted names: `name`, `email`, `company` (optional), `service`, `details`, and
+`_honeypot` (a CSS-hidden text field excluded from keyboard navigation and
+assistive technology). Formspark's automatic spam filtering and notification
+recipient `contact@sahtechlabs.com` are configured by the owner at the provider.
+No credentials, backend, CAPTCHA, or additional provider are used.
+
+`contact@sahtechlabs.com` remains the direct email fallback. The form warns
+against sensitive information and identifies Formspark as the processor.
+A dedicated privacy page is still required before production deployment.
 
 ### Validation and remaining work
 
@@ -67,7 +79,12 @@ available; Node is not needed to serve or use the site. Review keyboard
 navigation, responsive layouts, zoom, contrast, and reduced-motion behavior in
 browsers before release.
 
-Later checkpoints require owner approval: final content and brand review,
-browser/accessibility testing, privacy and form decisions, Open Graph assets,
+Manual browser checks must cover native required/email validation, keyboard and
+screen-reader feedback, duplicate-submit prevention, success reset, failure data
+preservation, and the no-JavaScript POST path. Mocked checks cannot establish
+Formspark delivery: a real test must verify both the provider submission and
+notification arrival in `contact@sahtechlabs.com`.
+
+Later work requires owner approval: privacy content, Open Graph assets,
 robots.txt and sitemap.xml, and production deployment checks. No analytics,
-backend, form provider, or deployment configuration is included in Checkpoint 1.
+backend, or deployment configuration is included.
