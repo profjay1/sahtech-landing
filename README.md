@@ -27,7 +27,7 @@ complexity for the initial landing-page release.
 
 ## Status
 
-Initial development.
+Static website implemented; production deployment checks remain pending.
 
 ## Checkpoint 1: visual foundation
 
@@ -61,6 +61,9 @@ submission and feedback page. With JavaScript, the page sends an allowlisted
 JSON payload with `Content-Type` and `Accept` set to `application/json`, prevents
 concurrent submissions, and provides inline success or failure feedback.
 Only an HTTP success response resets the form. Failure preserves entered data.
+Ordinary fields are temporarily locked after capturing the payload and restored
+when the request settles. A 15-second abort timeout provides recovery feedback
+without automatically retrying a potentially received submission.
 
 Submitted names: `name`, `email`, `company` (optional), `service`, `details`, and
 `_honeypot` (a CSS-hidden text field excluded from keyboard navigation and
@@ -70,7 +73,7 @@ No credentials, backend, CAPTCHA, or additional provider are used.
 
 `contact@sahtechlabs.com` remains the direct email fallback. The form warns
 against sensitive information and identifies Formspark as the processor.
-A dedicated privacy page is still required before production deployment.
+The website Privacy Notice is available at `privacy.html`.
 
 ### Validation and remaining work
 
@@ -85,6 +88,7 @@ preservation, and the no-JavaScript POST path. Mocked checks cannot establish
 Formspark delivery: a real test must verify both the provider submission and
 notification arrival in `contact@sahtechlabs.com`.
 
-Later work requires owner approval: privacy content, Open Graph assets,
-robots.txt and sitemap.xml, and production deployment checks. No analytics,
-backend, or deployment configuration is included.
+The Privacy Notice, Open Graph/social preview metadata and image, `robots.txt`,
+and `sitemap.xml` are implemented. Production deployment checks remain pending
+and require owner approval. No analytics, backend, or deployment configuration
+is included.

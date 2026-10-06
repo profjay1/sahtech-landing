@@ -68,8 +68,9 @@ reducedMotion.addEventListener('change', updateSectionMotion);
 const enquiryForm = document.querySelector('.contact-form');
 const enquiryStatus = document.querySelector('#form-status');
 
-if (enquiryForm && enquiryStatus && 'fetch' in window && 'FormData' in window) {
+if (enquiryForm && enquiryStatus && 'fetch' in window && 'FormData' in window && 'AbortController' in window) {
   const submitButton = enquiryForm.querySelector('button[type="submit"]');
+  const ordinaryControls = Array.from(enquiryForm.querySelectorAll('fieldset input, fieldset select, fieldset textarea'));
   let sending = false;
 
   enquiryForm.addEventListener('submit', async (event) => {
@@ -81,6 +82,10 @@ if (enquiryForm && enquiryStatus && 'fetch' in window && 'FormData' in window) {
     submitButton.textContent = 'Sending…';
     enquiryStatus.textContent = 'Sending your enquiry…';
 
+    const previousDisabled = ordinaryControls.map((control) => control.disabled);
+    let timeoutId;
+    let timedOut = false;
+
     try {
       const fields = new FormData(enquiryForm);
       // Send only the agreed fields. Keep the honeypot value for provider screening.
@@ -88,6 +93,13 @@ if (enquiryForm && enquiryStatus && 'fetch' in window && 'FormData' in window) {
       ['name', 'email', 'company', 'service', 'details', '_honeypot'].forEach((name) => {
         payload[name] = fields.get(name) || '';
       });
+      // Capture values first: disabled controls are excluded from FormData.
+      ordinaryControls.forEach((control) => { control.disabled = true; });
+      const controller = new AbortController();
+      timeoutId = window.setTimeout(() => {
+        timedOut = true;
+        controller.abort();
+      }, 15000);
       const response = await fetch(enquiryForm.action, {
         method: 'POST',
         headers: {
@@ -95,18 +107,26 @@ if (enquiryForm && enquiryStatus && 'fetch' in window && 'FormData' in window) {
           Accept: 'application/json',
         },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       });
+      if (timedOut) throw new Error('Confirmation timed out');
       if (!response.ok) throw new Error('Submission unsuccessful');
 
       enquiryForm.reset();
       enquiryStatus.textContent = "Thank you. Your enquiry has been sent successfully. We'll be in touch after reviewing your message.";
-    } catch {
-      enquiryStatus.textContent = "We couldn't send your enquiry right now. Please try again, or email ";
+    } catch (error) {
+      enquiryStatus.textContent = timedOut || error?.name === 'AbortError'
+        ? "We couldn't confirm that your enquiry was sent. Please check your connection and try again if needed, or email "
+        : "We couldn't send your enquiry right now. Please try again, or email ";
       const emailLink = document.createElement('a');
       emailLink.href = 'mailto:contact@sahtechlabs.com';
       emailLink.textContent = 'contact@sahtechlabs.com';
       enquiryStatus.append(emailLink, '.');
     } finally {
+      window.clearTimeout(timeoutId);
+      ordinaryControls.forEach((control, index) => {
+        control.disabled = previousDisabled[index];
+      });
       sending = false;
       submitButton.removeAttribute('aria-disabled');
       submitButton.textContent = 'Send enquiry';

@@ -779,7 +779,7 @@ label span {
 input,select,textarea {
   width:100%;
   min-width:0;
-  border:1px solid #c8d2d8;
+  border:1px solid #768994;
   border-radius:.3rem;
   background:#f6f7f8;
   color:#526271;
@@ -804,6 +804,10 @@ textarea {
 
 .contact-form .button[type="submit"] {
   width:100%;
+}
+
+.contact-section .contact-form .button[type="submit"]:focus-visible {
+  outline-color:var(--teal);
 }
 
 .button:disabled,.button[aria-disabled="true"] {
