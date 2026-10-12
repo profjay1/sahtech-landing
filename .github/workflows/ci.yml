@@ -1,0 +1,53 @@
+name: Landing Page CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+      - feature/landing-page-v1
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate static website
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check required website files
+        run: |
+          test -f index.html
+          test -f privacy.html
+          test -f robots.txt
+          test -f sitemap.xml
+          test -f assets/css/styles.css
+          test -f assets/js/main.js
+          test -f assets/images/favicon.svg
+          test -f assets/images/sahtech-social-preview.png
+
+      - name: Validate JavaScript syntax
+        run: node --check assets/js/main.js
+
+      - name: Check whitespace errors
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BEFORE_SHA: ${{ github.event.before }}
+          CURRENT_SHA: ${{ github.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            git diff --check "$BASE_SHA" "$CURRENT_SHA"
+          elif [ "$BEFORE_SHA" != "0000000000000000000000000000000000000000" ]; then
+            git diff --check "$BEFORE_SHA" "$CURRENT_SHA"
+          else
+            echo "No previous commit available for comparison."
+          fi
